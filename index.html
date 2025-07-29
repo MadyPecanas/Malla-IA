@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Malla Ambiental Interactiva</title>
+  <!-- TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Alpine.js -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 p-6">
+  <div x-data="mallaApp()" class="max-w-5xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">Malla Ambiental 2018 – UNMSM</h1>
+
+    <!-- Instrucciones -->
+    <p class="mb-4 text-gray-700">
+      Marca las materias aprobadas y verás cómo se desbloquean las siguientes.
+    </p>
+
+    <!-- Tabla -->
+    <table class="w-full bg-white rounded shadow">
+      <thead class="bg-green-100">
+        <tr>
+          <th class="px-3 py-2">✔</th>
+          <th class="px-3 py-2">Código</th>
+          <th class="px-3 py-2">Asignatura</th>
+          <th class="px-3 py-2">Sem.</th>
+          <th class="px-3 py-2">Créditos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <template x-for="m in materias" :key="m.codigo">
+          <tr 
+            :class="{
+              'opacity-50': !materiaDesbloqueada(m),
+              'hover:bg-gray-50': materiaDesbloqueada(m)
+            }"
+          >
+            <td class="text-center">
+              <input type="checkbox"
+                     :disabled="!materiaDesbloqueada(m)"
+                     x-model="aprobadas"
+                     :value="m.codigo"
+              />
+            </td>
+            <td class="px-3 py-1" x-text="m.codigo"></td>
+            <td class="px-3 py-1" x-text="m.nombre"></td>
+            <td class="px-3 py-1 text-center" x-text="m.semestre"></td>
+            <td class="px-3 py-1 text-center" x-text="m.creditos"></td>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    function mallaApp() {
+      return {
+        // lista de códigos aprobados por el usuario
+        aprobadas: [],
+        // definición completa de la malla:
+        materias: [
+          // I Semestre (sin prereqs)
+          { codigo: 'INO101', nombre: 'Redacción y Técnicas de Comunicación I', semestre: 1, creditos: 3, prereqs: [] },
+          { codigo: 'INO102', nombre: 'Métodos de Estudio Universitario',        semestre: 1, creditos: 2, prereqs: [] },
+          { codigo: 'INO103', nombre: 'Desarrollo Personal y Liderazgo',         semestre: 1, creditos: 2, prereqs: [] },
+          { codigo: 'INO104', nombre: 'Cálculo I',                               semestre: 1, creditos: 4, prereqs: [] },
+          { codigo: 'INO105', nombre: 'Biología para Ciencias e Ingeniería',     semestre: 1, creditos: 4, prereqs: [] },
+          { codigo: 'INO106', nombre: 'Álgebra y Geometría Analítica',           semestre: 1, creditos: 4, prereqs: [] },
+          { codigo: 'INO107', nombre: 'Medio Ambiente y Desarrollo Sostenible',  semestre: 1, creditos: 3, prereqs: [] },
+          // II Semestre
+          { codigo: 'INO201', nombre: 'Redacción y Técnicas de Comunicación II', semestre: 2, creditos: 3, prereqs: ['INO101'] },
+          { codigo: 'INO202', nombre: 'Investigación Formativa',                  semestre: 2, creditos: 3, prereqs: [] },
+          { codigo: 'INO203', nombre: 'Realidad Nacional y Mundial',             semestre: 2, creditos: 2, prereqs: [] },
+          { codigo: 'INO204', nombre: 'Cálculo II',                              semestre: 2, creditos: 4, prereqs: ['INO104'] },
+          { codigo: 'INO205', nombre: 'Física I',                                semestre: 2, creditos: 4, prereqs: [] },
+          { codigo: 'INO206', nombre: 'Química General',                         semestre: 2, creditos: 4, prereqs: [] },
+          { codigo: 'INO207', nombre: 'Introducción a Ciencias e Ingeniería',    semestre: 2, creditos: 2, prereqs: [] },
+          // III Semestre
+          { codigo: '160001', nombre: 'Cálculo III',                            semestre: 3, creditos: 4, prereqs: ['INO204'] },
+          { codigo: '162001', nombre: 'Geología',                               semestre: 3, creditos: 3, prereqs: ['INO205'] },
+          { codigo: '072002', nombre: 'Química Inorgánica y Cualitativa',      semestre: 3, creditos: 4, prereqs: ['INO206'] },
+          { codigo: '167004', nombre: 'Dibujo Asistido por Computadora',       semestre: 3, creditos: 3, prereqs: ['INO205'] },
+          { codigo: '168002', nombre: 'Química Orgánica',                      semestre: 3, creditos: 4, prereqs: ['INO206'] },
+          { codigo: '142001', nombre: 'Estadística',                           semestre: 3, creditos: 4, prereqs: ['INO104','INO106'] },
+          { codigo: '163050', nombre: 'Geografía Física',                     semestre: 3, creditos: 3, prereqs: ['INO205'] },
+          // IV Semestre
+          { codigo: '160002', nombre: 'Cálculo IV',                            semestre: 4, creditos: 4, prereqs: ['160001'] },
+          { codigo: '072003', nombre: 'Fisicoquímica',                         semestre: 4, creditos: 4, prereqs: ['INO205','072002'] },
+          { codigo: '168004', nombre: 'Bioquímica',                            semestre: 4, creditos: 4, prereqs: ['INO105','168002'] },
+          { codigo: '163055', nombre: 'Ecología',                              semestre: 4, creditos: 4, prereqs: ['INO105','163050'] },
+          { codigo: '168005', nombre: 'Microbiología',                         semestre: 4, creditos: 3, prereqs: ['168002'] },
+          { codigo: '168006', nombre: 'Economía Ambiental',                   semestre: 4, creditos: 3, prereqs: ['160001','142001'] },
+          { codigo: '163054', nombre: 'Meteorología y Climatología',          semestre: 4, creditos: 3, prereqs: ['INO107','INO204'] },
+          // … continúa con los semestres V a X igual …
+        ],
+        // determina si todos los prereqs de m están en aprobadas
+        materiaDesbloqueada(m) {
+          return m.prereqs.every(c => this.aprobadas.includes(c));
+        }
+      }
+    }
+  </script>
+</body>
+</html>
